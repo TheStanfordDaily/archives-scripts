@@ -38,22 +38,21 @@ async function processFile(key) {
     let keyMatch = key.match(/.*\/(.*)?$/);
     let newKey = key;
     if (keyMatch && keyMatch.length >= 2) {
-        newKey = keyMatch[1].replace(".jp2", ".jpg");
+        newKey = keyMatch[1];
     }
+    console.log(newKey);
     if (key.endsWith(".jp2")) {
+        newKey = newKey.replace(".jp2", ".jpg");
         await new Promise(async (resolve, reject) => {
-            let result = gm(response.Body).compress("jpeg");
+            let result = gm(response.Body).quality(80).compress("jpeg");
             let buffer = await gmToBuffer(result);
-              var params = {Bucket: DEST_BUCKET, Key: newKey, Body: buffer, ContentType: "image/jpeg"};
-                  s3.putObject(params, function(err, resp) {
-                    if (err) reject(err);
-                    else resolve(resp);
-                  });
+            let params = {Bucket: DEST_BUCKET, Key: newKey, Body: buffer, ContentType: "image/jpeg"};
+            await s3.putObject(params).promise();
         });
-        throw "";
     }
     else if (key.endsWith(".xml")) {
-        
+      let params = {Bucket: DEST_BUCKET, Key: newKey, Body: response.Body, ContentType: "text/xml"};
+          await s3.putObject(params).promise();
     }
     else if (key.endsWith(".pdf")) {
         
