@@ -1,19 +1,9 @@
 const AWS = require('aws-sdk');
-var Promise = require('bluebird');
 var gm = require('gm').subClass({imageMagick: true});
-// Promise.promisifyAll(gm.prototype);
-const {promisify} = require('util');
-const stream = require('stream');
-var fs = require("fs");
 
 const s3 = new AWS.S3();
 const INPUT_BUCKET = "stanforddailyarchive";
 const DEST_BUCKET = "stanforddailyarchive-resized"
-
-//  var params = {
-//   Bucket: INPUT_BUCKET, 
-//   Key: "data.2012-aug/data/stanford/1920/12/03_01/Stanford_Daily_19201203_0001.pdf"
-//  };
 
 function gmToBuffer (data) {
     return new Promise((resolve, reject) => {
@@ -59,23 +49,21 @@ async function processFile(key) {
 }
 
 async function listObjects(params) {
-    // try {
-     let data = await s3.listObjectsV2(params).promise();
-        let ContinuationToken = data["NextContinuationToken"];
-        //   console.log(Object.keys(data));           // successful response
-        for (i in data.Contents) {
-            await processFile(data.Contents[i].Key);
-        }
-        // await listObjects({...params, ContinuationToken});
-    // }
-    // catch(err) {
-    //   console.log(err); // an error occurred
-    // }
- 
+    let data = await s3.listObjectsV2(params).promise();
+    let ContinuationToken = data["NextContinuationToken"];
+    for (i in data.Contents) {
+        await processFile(data.Contents[i].Key);
+    }
+    await listObjects(key, {...params});
 }
 
-var params = {
-    Bucket: INPUT_BUCKET
+
+
+async function main() {
+   var params = {
+        Bucket: INPUT_BUCKET
+   }
+   await listObjects(params);
 }
 
-listObjects(params);
+main();
