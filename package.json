@@ -16,5 +16,10 @@
   "bugs": {
     "url": "https://github.com/TheStanfordDaily/archives/issues"
   },
-  "homepage": "https://github.com/TheStanfordDaily/archives#readme"
+  "homepage": "https://github.com/TheStanfordDaily/archives#readme",
+  "dependencies": {
+    "aws-sdk": "^2.444.0",
+    "bluebird": "^3.5.4",
+    "gm": "^1.23.1"
+  }
 }
