@@ -43,12 +43,10 @@ async function processFile(key) {
     console.log(newKey);
     if (key.endsWith(".jp2")) {
         newKey = newKey.replace(".jp2", ".jpg");
-        await new Promise(async (resolve, reject) => {
-            let result = gm(response.Body).quality(80).compress("jpeg");
-            let buffer = await gmToBuffer(result);
-            let params = {Bucket: DEST_BUCKET, Key: newKey, Body: buffer, ContentType: "image/jpeg"};
-            await s3.putObject(params).promise();
-        });
+        let result = gm(response.Body).quality(80).compress("jpeg");
+        let buffer = await gmToBuffer(result);
+        let params = {Bucket: DEST_BUCKET, Key: newKey, Body: buffer, ContentType: "image/jpeg"};
+        await s3.putObject(params).promise();
     }
     else if (key.endsWith(".xml")) {
       let params = {Bucket: DEST_BUCKET, Key: newKey, Body: response.Body, ContentType: "text/xml"};
