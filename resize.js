@@ -54,7 +54,7 @@ async function listObjects(params) {
     for (i in data.Contents) {
         await processFile(data.Contents[i].Key);
     }
-    await listObjects(key, {...params});
+    await listObjects({ContinuationToken, ...params});
 }
 
 
