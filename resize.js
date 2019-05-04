@@ -1,5 +1,5 @@
 const AWS = require('aws-sdk');
-var gm = require('gm').subClass({imageMagick: true});
+const sharp = require('sharp');
 
 const s3 = new AWS.S3();
 const INPUT_BUCKET = "stanforddailyarchive";
@@ -33,8 +33,8 @@ async function processFile(key) {
     console.log(newKey);
     if (key.endsWith(".jp2")) {
         newKey = newKey.replace(".jp2", ".jpg");
-        let result = gm(response.Body).quality(80).compress("jpeg");
-        let buffer = await gmToBuffer(result);
+        let result = sharp(response.Body).jpeg({quality: 80}).toBuffer();
+        let buffer = await result;
         let params = {Bucket: DEST_BUCKET, Key: newKey, Body: buffer, ContentType: "image/jpeg"};
         await s3.putObject(params).promise();
     }
