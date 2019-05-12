@@ -5,9 +5,9 @@
 yum install GraphicsMagick ImageMagick
 ```
 
-`resize.js` - takes images, pdfs, xml files from s3://stanforddailyarchive; resizes images and PDFs; and puts them into s3://stanforddailyarchive-resized
+`list_metadata.js` lists metadata in tsd archive s3 bucket and puts them in metadata.json.
 
-`upload_cloudsearch.js` - takes images, pdfs, xml files from s3://stanforddailyarchive-resized; and puts them into cloudsearch.
+`upload-search.js` - takes and parses xml files, then puts them into Azure Search.
 
 
 aws lambda add-permission --profile tsd --function-name archives-resizer --principal s3.amazonaws.com --statement-id id1 --action "lambda:InvokeFunction" --source-arn arn:aws:s3:::stanforddailyarchive-source --source-account 607998788272

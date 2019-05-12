@@ -18,8 +18,15 @@
   },
   "homepage": "https://github.com/TheStanfordDaily/archives#readme",
   "dependencies": {
+    "@thestanforddaily/archives-web": "^0.2.1",
     "aws-sdk": "^2.444.0",
+    "cross-fetch": "^3.0.2",
     "gm": "^1.23.1",
     "sharp": "^0.22.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.4.4",
+    "@babel/node": "^7.2.2",
+    "@babel/preset-env": "^7.4.4"
   }
 }
