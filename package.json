@@ -18,7 +18,7 @@
   },
   "homepage": "https://github.com/TheStanfordDaily/archives#readme",
   "dependencies": {
-    "@thestanforddaily/archives-web": "^0.3.1",
+    "@thestanforddaily/archives-web": "^0.3.5",
     "aws-sdk": "^2.444.0",
     "cross-fetch": "^3.0.2",
     "gm": "^1.23.1",
