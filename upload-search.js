@@ -20,6 +20,7 @@ async function main() {
             console.log("skipping paper", paper.date);
             continue;
         }
+        console.log("processing paper", paper.date);
         let pages = await paper.getPages();
         for (let page of pages) {
             await page.getAltoData();
@@ -30,7 +31,7 @@ async function main() {
             let year = "" + page.date.getFullYear();
             let yearx = year.slice(0, 3) + "x";
             let yearxx = year.slice(0, 2) + "xx";
-            let dir = `text3/${yearxx}/${yearx}/${year}/${month}/${date}`;
+            let dir = `text3/${yearxx}/${yearx}/${year}/${month}m/${date}d`;
             await new Promise(function(resolve, reject) {
                 fs.mkdir(dir, { recursive: true }, (err) => {
                   if (err) reject(err);
@@ -48,7 +49,7 @@ async function main() {
                     console.log("skipping", path);
                     continue;   
                 }
-                console.log(path, section.title, section.subtitle, section.author);
+                // console.log(path, section.title, section.subtitle, section.author);
                 let text = ["# " + section.title, "## " + section.subtitle, "### " + section.author, await page.getSectionText(section)].join("\n");
                 await new Promise(function(resolve, reject) {
                     fs.writeFile(path, text, function(err) {
