@@ -31,7 +31,8 @@ async function main() {
             let year = "" + page.date.getFullYear();
             let yearx = year.slice(0, 3) + "x";
             let yearxx = year.slice(0, 2) + "xx";
-            let dir = `text3/${yearxx}/${yearx}/${year}/${month}m/${date}d`;
+            // let dir = `text2/${yearxx}/${yearx}/${year}/${month}m/${date}d`;
+            let dir = `text2/${year}/${month}/${date}`;
             await new Promise(function(resolve, reject) {
                 fs.mkdir(dir, { recursive: true }, (err) => {
                   if (err) reject(err);
