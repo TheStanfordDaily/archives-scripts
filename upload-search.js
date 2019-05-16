@@ -22,7 +22,8 @@ async function main() {
         }
         console.log("processing paper", paper.date);
         let pages = await paper.getPages();
-        for (let page of pages) {
+        for (let i in pages) {
+            let page = pages[i];
             await page.getAltoData();
             let month = page.date.getMonth() + 1;
             month = (month < 10) ? "0" + month : "" + month;
@@ -60,6 +61,7 @@ async function main() {
                 });
                 // break;
             }
+            pages[i] = null;
             // break;
         }
         papers[i] = null;
