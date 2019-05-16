@@ -30,9 +30,6 @@ async function main() {
             let date = page.date.getDate();
             date = (date < 10) ? "0" + date : "" + date;
             let year = "" + page.date.getFullYear();
-            let yearx = year.slice(0, 3) + "x";
-            let yearxx = year.slice(0, 2) + "xx";
-            // let dir = `text2/${yearxx}/${yearx}/${year}/${month}m/${date}d`;
             let dir = `text2/${year}/${month}/${date}`;
             await new Promise(function(resolve, reject) {
                 fs.mkdir(dir, { recursive: true }, (err) => {
@@ -59,12 +56,9 @@ async function main() {
                         else resolve();
                     });
                 });
-                // break;
             }
             pages[i] = null;
-            // break;
         }
         papers[i] = null;
-        // break;
     }
 }
