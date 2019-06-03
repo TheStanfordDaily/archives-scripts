@@ -1,26 +1,28 @@
-const AWS = require('aws-sdk');
-const s3 = new AWS.S3();
-const INPUT_BUCKET = "stanforddailyarchive";
+/*
+ * This script fetches all papers for a particular year, extracts the text,
+ * and then puts them into the appropriate text file in the destination directory.
+ * Usage: node extract-text.js 1892
+ *
+ */
 const {fetchAllPapers} = require("@thestanforddaily/archives-web/lib/helpers/papers");
 const fs = require("fs");
+
+if (process.argv.length < 2) {
+    throw "Please specify a year as a command-line argument.";
+}
+const year = parseInt(process.argv[2]);
+const OUTPUT_DIR = "output";
 
 main();
 
 async function main() {
-    // let params = {Bucket: INPUT_BUCKET, Key: "metadata.json"};
-    // let response = await s3.getObject(params).promise();
-    // let metadata = JSON.parse(response.Body.toString());
-    // for (let year in metadata) {
-    //     console.log(year);
-    // }
     let papers = await fetchAllPapers();
     for (let i in papers) {
         let paper = papers[i];
-        if (process.argv.length > 2 && !isNaN(process.argv[2]) && paper.date.getFullYear() < parseInt(process.argv[2])) {
-            console.log("skipping paper", paper.date);
+        if (paper.date.getFullYear() < parseInt(process.argv[2])) {
             continue;
         }
-        console.log("processing paper", paper.date);
+        console.log(paper.date);
         let pages = await paper.getPages();
         for (let i in pages) {
             let page = pages[i];
@@ -30,7 +32,7 @@ async function main() {
             let date = page.date.getDate();
             date = (date < 10) ? "0" + date : "" + date;
             let year = "" + page.date.getFullYear();
-            let dir = `text2/${year}/${month}/${date}`;
+            let dir = `${OUTPUT_DIR}/${year}/${month}/${date}`;
             await new Promise(function(resolve, reject) {
                 fs.mkdir(dir, { recursive: true }, (err) => {
                   if (err) reject(err);
@@ -44,12 +46,12 @@ async function main() {
                 //     sectionID: 'MODSMD_ARTICLE4',
                 //     areaIDs: [ 'P1_TB00014', 'P1_TB00015' ] },
                 let path = `${dir}/${section.sectionID}.${section.type.toLowerCase()}.txt`;
-                if (fs.existsSync(path)) {
-                    console.log("skipping", path);
-                    continue;   
+                let text = [await page.getSectionText(section)]; 
+                const process = e => e.replace(/\n/g, " ");
+                if (!fs.existsSync(path)) {
+                   text = ["# " + process(section.title), "## " + process(section.subtitle), "### " + process(section.author), ...text];
                 }
-                // console.log(path, section.title, section.subtitle, section.author);
-                let text = ["# " + section.title, "## " + section.subtitle, "### " + section.author, await page.getSectionText(section)].join("\n");
+                text = text.join("\n"); 
                 await new Promise(function(resolve, reject) {
                     fs.writeFile(path, text, function(err) {
                         if (err) reject(err);
