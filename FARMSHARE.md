@@ -6,6 +6,8 @@ We can run these as batch jobs to save time!
 ssh ashwin99@rice.stanford.edu
 git clone https://github.com/TheStanfordDaily/archives.git
 cd archives
+nvm use 10
+npm i
 mkdir slurm_logs
 YEAR_START=1892 sbatch --array=0-122 slurm-script.sh
 ```
