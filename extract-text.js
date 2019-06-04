@@ -53,7 +53,7 @@ async function main() {
                 }
                 text = text.join("\n"); 
                 await new Promise(function(resolve, reject) {
-                    fs.writeFile(path, text, function(err) {
+                    fs.appendFile(path, text, function(err) {
                         if (err) reject(err);
                         else resolve();
                     });

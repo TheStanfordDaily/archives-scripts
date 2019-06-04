@@ -2,5 +2,5 @@
 node_modules
 text
 stanford-text-corrections
-output
+output*
 *.swp
