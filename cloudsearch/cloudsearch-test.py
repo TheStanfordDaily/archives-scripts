@@ -13,8 +13,8 @@ import boto3
 
 client = boto3.client('cloudsearch')
 
-# some constants used in this demo
-MY_IP = "75.188.62.170" # maybe I shouldn't check in my IP. 
+# some constants used in this demo. change to your IP, or some IP (but not some random IP), or you'll probably get an error.
+MY_IP = "YOUR-IP-GOES-HERE"
 DN = "dev-alex"
 # this is just a test access policy. You can make your own. Documented here: https://docs.aws.amazon.com/cloudsearch/latest/developerguide/configuring-access.html
 AP = "{\"Version\":\"2012-10-17\",\"Statement\":[{\
