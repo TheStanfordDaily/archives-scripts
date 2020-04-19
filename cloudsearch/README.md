@@ -39,6 +39,8 @@ A test file to get myself acquainted with the CloudSearchDomain SDK
 - [Expression](https://docs.aws.amazon.com/cloudsearch/latest/developerguide/API_Expression.html), [more](https://docs.aws.amazon.com/cloudsearch/latest/developerguide/configuring-expressions.html) - Expressions that can be evaluated dynamically at search time, for sorting search results, or returning coupled information about search results. 
 - [Analysis Scheme](https://docs.aws.amazon.com/cloudsearch/latest/developerguide/configuring-analysis-schemes.html) - allows custom text field analysis, to customize search results on text. Probably don't need to use this--default analysis scheme seems legit enough.
 - [Paginators](https://boto3.amazonaws.com/v1/documentation/api/latest/guide/paginators.html) - a layer of abstraction for pagination. Pagination is the process of making subsequent requests from an initial request (e.g. initial request returns IDs of search results, then a subsequent request would be to get some data about the documents which the IDs correspond to). I think [this](https://docs.aws.amazon.com/cloudsearch/latest/developerguide/paginating-results.html) is also an example of when to use pagination. 
+- [Domain Statuses & Meanings](https://docs.aws.amazon.com/cloudsearch/latest/developerguide/getting-domain-info.html) - Note: you can still upload documents while domain status is PROCESSING, NEEDS INDEXING or ACTIVE.
+- [Index Field](https://docs.aws.amazon.com/cloudsearch/latest/developerguide/configuring-index-fields.html) - index fields contain the data which can be searched/returned. Like the schema of the data.
 
 ## Resources
 - [5 min introductory video from Amazon](https://www.youtube.com/watch?v=gpG16MFnEH8)
@@ -47,3 +49,5 @@ A test file to get myself acquainted with the CloudSearchDomain SDK
 - [CloudSearch Developer Resources](https://aws.amazon.com/cloudsearch/developer-resources/) - note the Python doc is out of date. Use boto 3.
 - [Python CloudSearch API Ref](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/cloudsearch.html)
 - [Python CloudSearchDomain API Ref](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/cloudsearchdomain.html)
+- [Some more doc](https://github.com/awsdocs/amazon-cloudsearch-developer-guide/tree/master/doc_source)
+- [Outdated guide, but still useful conceptually](https://boto.readthedocs.io/en/latest/cloudsearch_tut.html)
