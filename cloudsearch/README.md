@@ -37,6 +37,9 @@ Note: you can do many other things, like update scaling parameters with the clou
 A test file to get myself acquainted with the CloudSearchDomain SDK
 
 ## Todo
+make experiments testing search/suggest/upload speeds
+
+start playing around with actual document data + probably need scripts to get document data to correct JSON/XML format that document_upload accepts.
 
 ## Questions & answers when found & also terms/things which I found confusing
 - CloudSearch vs CloudSearch 2?

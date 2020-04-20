@@ -174,14 +174,14 @@ def createSuggester(domainName, suggester):
     print(response,"\n")
 
 def main():
-    # createDomain(DN)
-    # getDomainStatus(DN)
-    # configureAccessPolicies(DN, AP) # commented out, b/c it throws the domain into PROCESSING. 
-    # showAccessPolicies(DN)
-    # showIndexFields(DN)
-    # configureIndexFields(DN, IF_TEXT)
-    # configureIndexFields(DN, IF_INT)
-    # indexDocuments(DN)
+    createDomain(DN)
+    getDomainStatus(DN)
+    configureAccessPolicies(DN, AP)
+    showAccessPolicies(DN)
+    showIndexFields(DN)
+    configureIndexFields(DN, IF_TEXT)
+    configureIndexFields(DN, IF_INT)
+    indexDocuments(DN)
     createSuggester(DN, SUGGESTER)
 
 if __name__ == '__main__':
