@@ -8,8 +8,12 @@ Currently, this program gives examples for how to:
 4. configure and show index fields in domain
 5. force domain to index documents
 6. define a suggester
-"""
 
+some valuable experiments might be to change values of constants used in this 
+demo. it will give you an idea of how these pieces of data need to be
+structured, and the SDK will give you descriptive errors if you make changes
+that are invalid (which you should try out!)
+"""
 import boto3
 
 client = boto3.client('cloudsearch')
