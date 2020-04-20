@@ -36,17 +36,29 @@ Note: you can do many other things, like update scaling parameters with the clou
 ### `cloudsearchdomain-test.py`
 A test file to get myself acquainted with the CloudSearchDomain SDK
 
+### `process-archives-text.py`
+processes the .txt files in archives-text to 
+
+### `docs/search.md`
+gives the schema of columns in cloudsearch
+
 ## Todo
 make experiments testing search/suggest/upload speeds
 
 start playing around with actual document data + probably need scripts to get document data to correct JSON/XML format that document_upload accepts.
 
+create a script to correct document data (many of the documents have repeated text)
+
+make estimates on size / costs of everything
+
+figure out the IAM stuff
+
 ## Questions & answers when found & also terms/things which I found confusing
 - CloudSearch vs CloudSearch 2?
   - Use CloudSearch2. CloudSearch is the older version (I think pre 2013/4?)
 - CloudSearch vs CloudSearchDomain
-  - Domain client used to submit search requests and document requests
-  - CloudSearch allows you to create and modify domains, define details of that domains like index fields (i.e. searchable fields), scheme define a custom result suggester. This is more of administrative stuff / meta data.
+  - Domain client used to submit search requests and document requests. 
+  - CloudSearch allows you to create and modify domains, define details of that domains like index fields (i.e. searchable fields), scheme define a custom result suggester. This is more of administrative stuff / meta data. CloudSearch is basically API for the cloudsearch dashboard sidebar, under 'configure domain'
   - CloudSearchDomain is used to upload documents, search for documents, suggest documents. Used for interacting with the actual data.
 - [Expression](https://docs.aws.amazon.com/cloudsearch/latest/developerguide/API_Expression.html), [more](https://docs.aws.amazon.com/cloudsearch/latest/developerguide/configuring-expressions.html) - Expressions that can be evaluated dynamically at search time, for sorting search results, or returning coupled information about search results. 
 - [Analysis Scheme](https://docs.aws.amazon.com/cloudsearch/latest/developerguide/configuring-analysis-schemes.html) - allows custom text field analysis, to customize search results on text. Probably don't need to use this--default analysis scheme seems legit enough.
