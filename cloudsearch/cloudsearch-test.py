@@ -7,6 +7,7 @@ Currently, this program gives examples for how to:
 3. configure and show access policies for domain
 4. configure and show index fields in domain
 5. force domain to index documents
+6. define a suggester
 """
 
 import boto3
@@ -47,6 +48,14 @@ IF_INT = {
         'SortEnabled': True
     }
 }
+SUGGESTER = {
+    'SuggesterName': 'testsuggester',
+    'DocumentSuggesterOptions': {
+        'SourceField': 'testfieldtext',
+        'FuzzyMatching': 'low',
+        'SortExpression': 'testfieldint'
+    }
+}
 
 """
 https://docs.aws.amazon.com/cloudsearch/latest/developerguide/creating-domains.html
@@ -75,7 +84,9 @@ tells us state/status of domain
 def getDomainStatus(domainName):
     print("\nDomain status", domainName)
     response = client.describe_availability_options(DomainName=domainName)
-    print(response['AvailabilityOptions']['Status']['State'], "\n")
+    print(response['AvailabilityOptions']['Status']['State'])
+    response = client.describe_domain_endpoint_options(DomainName=domainName)
+    print(response['DomainEndpointOptions']['Status']['State'], "\n")
 
 """
 displays current access policies for domain w/ name domainName
@@ -146,15 +157,28 @@ def indexDocuments(domainName):
     response = client.index_documents(DomainName=domainName)
     print(response,"\n")
 
+"""
+Docs for how to define suggester:
+https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/cloudsearch.html#CloudSearch.Client.define_suggester
+https://docs.aws.amazon.com/cloudsearch/latest/developerguide/getting-suggestions.html
+
+though, perhaps it's easier to define suggesters on console. 
+"""
+def createSuggester(domainName, suggester):
+    print("\nCreating Suggester for", domainName)
+    response = client.define_suggester(DomainName=domainName, Suggester=suggester)
+    print(response,"\n")
+
 def main():
-    createDomain(DN)
-    getDomainStatus(DN)
-    configureAccessPolicies(DN, AP) # commented out, b/c it throws the domain into PROCESSING. 
-    showAccessPolicies(DN)
-    showIndexFields(DN)
-    configureIndexFields(DN, IF_TEXT)
-    configureIndexFields(DN, IF_INT)
-    indexDocuments(DN)
+    # createDomain(DN)
+    # getDomainStatus(DN)
+    # configureAccessPolicies(DN, AP) # commented out, b/c it throws the domain into PROCESSING. 
+    # showAccessPolicies(DN)
+    # showIndexFields(DN)
+    # configureIndexFields(DN, IF_TEXT)
+    # configureIndexFields(DN, IF_INT)
+    # indexDocuments(DN)
+    createSuggester(DN, SUGGESTER)
 
 if __name__ == '__main__':
     main()

@@ -22,7 +22,16 @@ Never check in AWS credentials into git. Instead:
 ## Files
 
 ### `cloudsearch-test.py`
-A test file to get myself acquainted with the CloudSearch SDK
+A test file to get myself acquainted with the CloudSearch SDK.
+This file shows how to use SDK to 
+1. create a domain
+2. get domain status
+3. configure and show access policies for domain
+4. configure and show index fields in domain
+5. force domain to index documents
+6. define a suggester
+
+Note: you can do many other things, like update scaling parameters with the cloudsearch SDK. Checkout the boto3 docs (linked in [resources](#resources)).
 
 ### `cloudsearchdomain-test.py`
 A test file to get myself acquainted with the CloudSearchDomain SDK
@@ -47,7 +56,7 @@ A test file to get myself acquainted with the CloudSearchDomain SDK
 - [45 min introductory video from Amazon](https://www.youtube.com/watch?v=MaKiGbLEDxg) - talks about data types, queries, highlighting, autocomplete etc. 
 - [Good starting point](https://docs.aws.amazon.com/cloudsearch/latest/developerguide/what-is-cloudsearch.html) - go down each of the topics in the left sidebar. One notable topic in the sidebar is the API reference. 
 - [CloudSearch Developer Resources](https://aws.amazon.com/cloudsearch/developer-resources/) - note the Python doc is out of date. Use boto 3.
-- [Python CloudSearch API Ref](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/cloudsearch.html)
-- [Python CloudSearchDomain API Ref](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/cloudsearchdomain.html)
+- [Python CloudSearch SDK/API Ref](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/cloudsearch.html)
+- [Python CloudSearchDomain SDK/API Ref](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/cloudsearchdomain.html)
 - [Some more doc](https://github.com/awsdocs/amazon-cloudsearch-developer-guide/tree/master/doc_source)
 - [Outdated guide, but still useful conceptually](https://boto.readthedocs.io/en/latest/cloudsearch_tut.html)
