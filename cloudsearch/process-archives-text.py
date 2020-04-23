@@ -26,12 +26,15 @@ and if this data doesn't put the total data over 5 MB, then it will tack it on
 Otherwise, it will write current data to a file, and then clear that data, and start
 new data collection starting with this current article data.
 """
-
+import boto3
 import os
 import re
 
+DOC_ENDPOINT = "https://ENDPOINT_HERE"
+doc_client = boto3.client('cloudsearchdomain', endpoint_url=DOC_ENDPOINT)
+
 # You need to set this
-ARCHIVES_TEXT_PATH = "PATH_TO_ARCHIVES_TEXT_DIRECTORY"
+ARCHIVES_TEXT_PATH = "/Users/alexfu/Desktop/School/College/Clubs:Activities/Stanford-Daily/archives-text/"
 
 VALID_ARTICLE_TYPES = ['article', 'advertisement',]
 VALID_AUTHOR_TITLES = ['','DESK EDITOR',]
@@ -48,6 +51,14 @@ def checkDate(date):
     if(not isinstance(date['day'], int)):
         return False
     return True    
+
+def create_cloudsearch_add_request_json(fields):
+    return {
+        "type": "add",
+        "id": fields["publish_date"] + fields["article_type"] + str(fields["article_number"]),
+        "fields": fields,
+    }
+
 
 """
 articleDate is a dict {year: int, month: int, day: int}. cloudsearch needs this format: yyyy-mm-ddTHH:mm:ss.SSSZ 
@@ -67,51 +78,49 @@ def create_article_fields(articleText, articleType, articleNumber, publishDate,
         print(f'{publishDate} not a valid date. Article Number: {articleNumber} Date: {publishDate}')
         return
     fields = {
-        "article-text": articleText,
-        "article-type": articleType,
-        "article-number": articleNumber,
-        "publish-date": f'{str(publishDate["year"]).zfill(4)}-{str(publishDate["month"]).zfill(2)}-{str(publishDate["day"]).zfill(2)}T12:00:00Z', # default set time to 12:00, since we don't care about that.
+        "article_text": articleText,
+        "article_type": articleType,
+        "article_number": articleNumber,
+        "publish_date": f'{str(publishDate["year"]).zfill(4)}-{str(publishDate["month"]).zfill(2)}-{str(publishDate["day"]).zfill(2)}T12:00:00Z', # default set time to 12:00, since we don't care about that.
         "title": title, # perhaps just don't include this if field is empty?
         "subtitle": subtitle,
         "author": author,
-        "author-title": authorTitle,
+        "author_title": authorTitle,
     }
     return fields
 
 def get_archives_years():
     entries = os.listdir(ARCHIVES_TEXT_PATH)
+    filtered = []
     for i in range(0, len(entries)):
         try: 
-            entries[i] = int(entries[i])
+            filtered.append( int(entries[i]))
         except:
             continue
-    return entries
+    return filtered
 
 def get_archives_months(year):
     entries = os.listdir(ARCHIVES_TEXT_PATH + str(year).zfill(4) + "/")
+    filtered = []
     for i in range(0, len(entries)):
         try: 
-            entries[i] = int(entries[i])
+            filtered.append( int(entries[i]))
         except:
             continue
-    return entries
+    return filtered
 
 def get_archives_days(year, month):
     entries = os.listdir(ARCHIVES_TEXT_PATH + str(year).zfill(4) + "/" + str(month).zfill(2) + "/")
+    filtered = []
     for i in range(0, len(entries)):
         try: 
-            entries[i] = int(entries[i])
+            filtered.append( int(entries[i]))
         except:
             continue
-    return entries
+    return filtered
 
 def get_archives_article_filenames(year, month, day):
     entries = os.listdir(ARCHIVES_TEXT_PATH + str(year).zfill(4) + "/" + str(month).zfill(2) + "/" + str(day).zfill(2))
-    for i in range(0, len(entries)):
-        try: 
-            entries[i] = int(entries[i])
-        except:
-            continue
     return entries
 
 """
@@ -155,11 +164,11 @@ def pretty_print_article_fields(article_fields):
     print("title:", article_fields['title'])
     print("subtitle:", article_fields['subtitle'])
     print("author:", article_fields['author'])
-    print("author-title:", article_fields['author-title'])
-    print("article-type:", article_fields['article-type'])
-    print("article-number:", article_fields['article-number'])
-    print("publish-date:", article_fields['publish-date'])
-    print("text sample:", article_fields['article-text'][0:40])
+    print("author_title:", article_fields['author_title'])
+    print("article_type:", article_fields['article_type'])
+    print("article_number:", article_fields['article_number'])
+    print("publish_date:", article_fields['publish_date'])
+    print("text sample:", article_fields['article_text'][0:40])
     print("----------------------------------------------------------")
 
 def generate_lots_article_data():
@@ -172,6 +181,11 @@ def generate_lots_article_data():
         article_fields = create_article_fields(**article_data)
         pretty_print_article_fields(article_fields)
 
+def uploadDocuments(documentsJSON):
+    print("\nMaking Doc Upload")
+    response = doc_client.upload_documents(documents=documentsJSON, contentType="application/json")
+    print(response,"\n")
+
 def tests():
     archives_years = get_archives_years()
     archives_months = get_archives_months(archives_years[0])
@@ -181,6 +195,9 @@ def tests():
     article_fields = create_article_fields(**article_data)
     pretty_print_article_fields(article_fields)
     generate_lots_article_data()
+
+    cloudsearch_add_request = create_cloudsearch_add_request_json(article_fields)
+
 
 def main():
     tests()
