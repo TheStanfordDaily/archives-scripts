@@ -51,7 +51,7 @@ create a script to correct document data (many of the documents have repeated te
 
 make estimates on size / costs of everything
 
-figure out the IAM stuff
+change article number to articleLocalID which includes the entire first part of filename, not just the number.
 
 ## Questions & answers when found & also terms/things which I found confusing
 - CloudSearch vs CloudSearch 2?
