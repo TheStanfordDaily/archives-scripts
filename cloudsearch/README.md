@@ -37,7 +37,13 @@ Note: you can do many other things, like update scaling parameters with the clou
 A test file to get myself acquainted with the CloudSearchDomain SDK
 
 ### `process-archives-text.py`
-processes the .txt files in archives-text to 
+processes the .txt files in archives-text to cloudsearch readable JSON
+
+### `find-author-titles-archives-text.py`
+script to find possible author titles
+
+### `cloudsearch-process-and-upload.py`
+an OO program which does same thing as `process-archives-text.py` except neater/better. Designed to be run in parallel (one object/process per year, or year range)
 
 ### `docs/search.md`
 gives the schema of columns in cloudsearch
