@@ -49,11 +49,8 @@ an OO program which does same thing as `process-archives-text.py` except neater/
 gives the schema of columns in cloudsearch
 
 ## Todo
-- experiments testing search/suggest/upload speeds
 - create a script to correct document data (many of the documents have repeated text)
 - make estimates on size / costs of everything -- figure out optimal scaling option (e.g. search.m1.small)
-- change article number to articleLocalID which includes the entire first part of filename, not just the number.
-- make setup.sh script which runs `git clone https://github.com/TheStanfordDaily/archives-text.git`
 - look into highlighting search hits with Cloudsearch
 
 ## Questions & answers when found & also terms/things which I found confusing
