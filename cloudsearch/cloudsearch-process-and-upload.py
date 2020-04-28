@@ -62,7 +62,7 @@ class ArchivesTextProcessor:
         self.currentSizeInBytes = 0
         self.logger = Logger(LOG_PATH, str(startYear))
         self.is_done = False
-        print(f'logs outputted to {self.logger.get_fullpath()}')
+        print('logs outputted to %s' % self.logger.get_fullpath())
 
         # initialize some data
         self.years_left = list(range(startYear, endYear))
@@ -97,7 +97,7 @@ class ArchivesTextProcessor:
         elif(level == 'article'):
             return self.base_path + str(self.currentYear).zfill(4) + '/' + str(self.currentMonth).zfill(2) + '/' + str(self.currentDay).zfill(2) + '/' + self.currentArticle
         else:
-            self.logger.log(f'ERROR: {level} is an invalid level')
+            self.logger.log('ERROR: is an invalid level' % level)
 
     def set_months_left_in_year(self):
         months = os.listdir(self.get_current_path('year'))
@@ -173,7 +173,7 @@ class ArchivesTextProcessor:
     the following are functions to process data in the .txt files in archives-text
     '''
     def get_current_publish_date(self):
-        return f'{str(self.currentYear).zfill(4)}-{str(self.currentMonth).zfill(2)}-{str(self.currentDay).zfill(2)}T12:00:00Z' # default set time to 12:00, since we don't care about that.
+        return '%s-%s-%sT12:00:00Z' %(str(self.currentYear).zfill(4), str(self.currentMonth).zfill(2), str(self.currentDay).zfill(2)) # default set time to 12:00, since we don't care about that.
 
     # detects if text has repeated substrings and removes if true
     # this seems like a leetcode problem lol. I'm using this as a ref https://www.geeksforgeeks.org/python-check-if-string-repeats-itself/
@@ -196,11 +196,11 @@ class ArchivesTextProcessor:
 
             # perform some sanity checks 
             if(not articleLines[0].startswith('#')):
-                self.logger.log(f'error in first line of article {self.get_current_path("article")}')
+                self.logger.log('error in first line of article %s' % self.get_current_path("article"))
             if(not articleLines[1].startswith('##')):
-                self.logger.log(f'error in second line of article {self.get_current_path("article")}')
+                self.logger.log('error in second line of article %s' % self.get_current_path("article"))
             if(not articleLines[2].startswith('###')):
-                self.logger.log(f'error in third line of article {self.get_current_path("article")}')
+                self.logger.log('error in third line of article %s' % self.get_current_path("article"))
 
             # extract data
             title = re.sub('\s+', ' ', articleLines[0][2:].strip()) # get rid of extra whitespace, plus skip extra chars
@@ -259,11 +259,11 @@ class ArchivesTextProcessor:
         current_request = self.create_current_article_cloudsearch_add_request_JSON()
         size = len(json.dumps(current_request))
         if(size > MAX_FILE_SIZE):
-            self.logger.log(f'{self.get_current_path("article")} is too big!')
+            self.logger.log('%s is too big!' % self.get_current_path("article"))
         return size
 
     def create_batch_article_cloudsearch_add_request_JSON(self):
-        self.logger.log(f'creating a new batch, starting at article {self.get_current_path("article")}')
+        self.logger.log('creating a new batch, starting at article %s' % self.get_current_path("article"))
         current_batch = []
         article_count = 0
         # this is pretty inefficient b/c we're computing the add request 3 times.
@@ -274,7 +274,7 @@ class ArchivesTextProcessor:
             not_done = self.move_to_next_article()
             if(not_done < 0):
                 break # we've reached the last article
-        self.logger.log(f'done with batch, ended at article {self.get_current_path("article")}, has size {self.currentSizeInBytes} bytes and total of {article_count} articles')
+        self.logger.log('done with batch, ended at article %s, has size bytes %d and total of %d articles' % (self.get_current_path("article"), self.currentSizeInBytes, article_count))
         self.currentSizeInBytes = 0
         return current_batch
 
