@@ -14,10 +14,9 @@ How to run the contents of this directory
 ## AWS Credentials Setup
 Never check in AWS credentials into git. Instead:
 1. Install [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html)
-2. Run `aws configure` in shell, and set your `AWS Access Key ID`, `AWS Secret Access Key` and set `Default region name` to be `us-east-1`.
-   1. Note: currently, I don't know what to set as `Default output format`, so I just left it blank.
-   2. You can always run `aws configure` again to update these values
-   3. Note: your data will be saved to the `~/.aws` directory.
+2. Run `aws configure` in shell, and set your `AWS Access Key ID`, `AWS Secret Access Key`, set `Default region name` to be `us-east-1` and set `Default output format` to text 
+   1. You can always run `aws configure` again to update these values
+   2. Note: your data will be saved to the `~/.aws` directory.
 
 ## Files
 
@@ -43,15 +42,14 @@ processes the .txt files in archives-text to
 gives the schema of columns in cloudsearch
 
 ## Todo
-make experiments testing search/suggest/upload speeds
+- experiments testing search/suggest/upload speeds
+- create a script to correct document data (many of the documents have repeated text)
+- make estimates on size / costs of everything -- figure out optimal scaling option (e.g. search.m1.small)
+- change article number to articleLocalID which includes the entire first part of filename, not just the number.
+- make setup.sh script which runs `git clone https://github.com/TheStanfordDaily/archives-text.git`
+- look into highlighting search hits with Cloudsearch
 
-start playing around with actual document data + probably need scripts to get document data to correct JSON/XML format that document_upload accepts.
 
-create a script to correct document data (many of the documents have repeated text)
-
-make estimates on size / costs of everything
-
-change article number to articleLocalID which includes the entire first part of filename, not just the number.
 
 ## Questions & answers when found & also terms/things which I found confusing
 - CloudSearch vs CloudSearch 2?

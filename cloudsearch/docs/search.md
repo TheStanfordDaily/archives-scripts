@@ -5,7 +5,7 @@
 |----------------|---------|
 | article_text   | text    |
 | article_type   | literal |
-| article_number | int     |
+| article_number | text    |
 | publish_date   | date    |
 | title          | text    |
 | subtitle       | text    |
@@ -22,7 +22,7 @@ the text of the article. searchable & suggestable
 Either `article` or `advertisement`
 
 ## article_number
-an int, which can be determined for articles as the number following `MODSMD_ARTICLE` in the article filename. For advertisements, it's the number following `DIVL` in the filename. This is useful for identifying information (combined with publish date and article type, this uniquely identifies an article among all articles in database). 
+a string, which can be determined from the first part of the article .txt filename (e.g. `DIVL148` or `MODSMD_ARTICLE7`).
 
 ## publish_date
 The date that the article was published on

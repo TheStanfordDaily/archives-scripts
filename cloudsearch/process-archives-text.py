@@ -30,11 +30,11 @@ import boto3
 import os
 import re
 
-DOC_ENDPOINT = "https://ENDPOINT_HERE"
-doc_client = boto3.client('cloudsearchdomain', endpoint_url=DOC_ENDPOINT)
+# DOC_ENDPOINT = "https://ENDPOINT_HERE"
+# doc_client = boto3.client('cloudsearchdomain', endpoint_url=DOC_ENDPOINT)
 
 # You need to set this
-ARCHIVES_TEXT_PATH = "/Users/alexfu/Desktop/School/College/Clubs:Activities/Stanford-Daily/archives-text/"
+ARCHIVES_TEXT_PATH = "/Users/alexfu/Desktop/School/College/Clubs_Activities/Stanford-Daily/archives-text/"
 
 VALID_ARTICLE_TYPES = ['article', 'advertisement',]
 VALID_AUTHOR_TITLES = ['','DESK EDITOR',]
@@ -71,8 +71,8 @@ def create_article_fields(articleText, articleType, articleNumber, publishDate,
     if(authorTitle not in VALID_AUTHOR_TITLES):
         print(f'{authorTitle} not a valid author title. Article Number: {articleNumber} Date: {publishDate}')
         return
-    if(not isinstance(articleNumber, int)):
-        print(f'{articleNumber} not an int. Article Number: {articleNumber} Date: {publishDate}')
+    if(not isinstance(articleNumber, str)):
+        print(f'{articleNumber} not a string. Article Number: {articleNumber} Date: {publishDate}')
         return
     if(not checkDate(publishDate)):
         print(f'{publishDate} not a valid date. Article Number: {articleNumber} Date: {publishDate}')
@@ -145,7 +145,7 @@ def get_article_data(year, month, day, filename):
         filename_parts = filename.split('.')
         articleType = filename_parts[1]
         temp = re.findall(r'\d+', filename_parts[0]) 
-        articleNumber = list(map(int, temp))[0]
+        articleNumber = filename_parts[0]
 
         articleData = {
             'articleText': articleText.strip(),
@@ -196,7 +196,7 @@ def tests():
     pretty_print_article_fields(article_fields)
     generate_lots_article_data()
 
-    cloudsearch_add_request = create_cloudsearch_add_request_json(article_fields)
+    # cloudsearch_add_request = create_cloudsearch_add_request_json(article_fields)
 
 
 def main():
