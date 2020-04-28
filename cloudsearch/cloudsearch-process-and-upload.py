@@ -35,17 +35,23 @@ VALID_AUTHOR_TITLES = ['', 'SENIOR STAFF WRITER', 'STAFF WRITER', 'DESK EDITOR',
 class Logger:
     def __init__(self, path, basename):
         self.fullpath = path + basename + '.log'
-        self.f = open(self.fullpath, 'w')
+        f = open(self.fullpath, 'w')
+        f.write("logger start\n")
+        f.close()
 
     def log(self, message):
-        self.f.write(message + "\n")
+        f = open(self.fullpath, 'a') # open and close here for live updates
+        f.write(message + "\n")
+        f.close()
 
     def get_fullpath(self):
         return self.fullpath
 
     def __del__(self):
-        self.f.close()
-
+        f = open(self.fullpath, 'a') # open and close here for live updates
+        f.write("logger done\n")
+        f.close()
+        
 class ArchivesTextProcessor:
     def __init__(self, base_path, startYear, endYear, batchSizeInBytes, docClient):
         self.base_path = base_path
@@ -55,6 +61,7 @@ class ArchivesTextProcessor:
         self.docClient = docClient
         self.currentSizeInBytes = 0
         self.logger = Logger(LOG_PATH, str(startYear))
+        self.is_done = False
         print(f'logs outputted to {self.logger.get_fullpath()}')
 
         # initialize some data
@@ -130,6 +137,7 @@ class ArchivesTextProcessor:
         if(len(self.years_left) == 0):
             self.logger.log('done')
             print('DONE!!')
+            self.is_done = True
             return -1
         else:
             self.currentYear = self.years_left.pop()
@@ -235,7 +243,10 @@ class ArchivesTextProcessor:
 
     def get_current_add_request_size_in_bytes(self):
         current_request = self.create_current_article_cloudsearch_add_request_JSON()
-        return len(json.dumps(current_request))
+        size = len(json.dumps(current_request))
+        if(size > MAX_FILE_SIZE):
+            self.logger.log(f'{self.get_current_path("article")} is too big!')
+        return size
 
     def create_batch_article_cloudsearch_add_request_JSON(self):
         self.logger.log(f'creating a new batch, starting at article {self.get_current_path("article")}')
@@ -253,17 +264,24 @@ class ArchivesTextProcessor:
         self.currentSizeInBytes = 0
         return current_batch
 
+    def are_we_done(self):
+        return self.is_done
+
 def tests():
     print('tests:')
-    testProcessor = ArchivesTextProcessor(ARCHIVES_TEXT_PATH, 2013, 2014, MAX_BATCH_SIZE, doc_client)
-    for i in range(100):
-        print(testProcessor.get_current_path('article'))
-        print("size:", testProcessor.get_current_add_request_size_in_bytes())
-        testProcessor.pretty_print_current_article_data()
-        testProcessor.move_to_next_article()
-    print('if you compare with https://github.com/TheStanfordDaily/archives-text/tree/master/1899/12 you should see matching results')
-    testProcessor.create_batch_article_cloudsearch_add_request_JSON()
-    printf('checkout the logfiles in ./log/')
+    testProcessor = ArchivesTextProcessor(ARCHIVES_TEXT_PATH, 1899, 1901, MAX_BATCH_SIZE, doc_client)
+    
+    # uncomment if you want to see some article data be printed out
+    # for i in range(100):
+    #     print(testProcessor.get_current_path('article'))
+    #     print("size:", testProcessor.get_current_add_request_size_in_bytes())
+    #     testProcessor.pretty_print_current_article_data()
+    #     testProcessor.move_to_next_article()
+    # print('if you compare with https://github.com/TheStanfordDaily/archives-text/tree/master/1899/12 you should see matching results')
+    
+    # test process the range between 1899 - 1901
+    while(not testProcessor.are_we_done()):
+        testProcessor.create_batch_article_cloudsearch_add_request_JSON()
 
 def main():
     tests()
