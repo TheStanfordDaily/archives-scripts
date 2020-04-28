@@ -267,6 +267,14 @@ class ArchivesTextProcessor:
     def are_we_done(self):
         return self.is_done
 
+    def upload_article_batch_to_cloudsearch(self):
+        self.logger.log("making a batch upload")
+        batch = json.dumps(self.create_batch_article_cloudsearch_add_request_JSON())
+        response = self.docClient.upload_documents(documents=batch, contentType="application/json")
+        self.logger.log(str(response))
+        self.logger.log("done with batch upload")
+
+
 def tests():
     print('tests:')
     testProcessor = ArchivesTextProcessor(ARCHIVES_TEXT_PATH, 1899, 1901, MAX_BATCH_SIZE, doc_client)
@@ -280,8 +288,11 @@ def tests():
     # print('if you compare with https://github.com/TheStanfordDaily/archives-text/tree/master/1899/12 you should see matching results')
     
     # test process the range between 1899 - 1901
-    while(not testProcessor.are_we_done()):
-        testProcessor.create_batch_article_cloudsearch_add_request_JSON()
+    # while(not testProcessor.are_we_done()):
+    #     testProcessor.create_batch_article_cloudsearch_add_request_JSON()
+
+    # test a batch upload
+    testProcessor.upload_article_batch_to_cloudsearch()
 
 def main():
     tests()
