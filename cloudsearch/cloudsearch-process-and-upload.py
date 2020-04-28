@@ -9,10 +9,12 @@ import boto3
 import os
 import re
 import json
+from multiprocessing import Pool
+import time
+
 
 DOC_ENDPOINT = 'https://doc-dev-alex-j7lgucvvgtchzkfv7dze2su4ey.us-east-1.cloudsearch.amazonaws.com'
-# perhaps have this as a class variable
-doc_client = boto3.client('cloudsearchdomain', endpoint_url=DOC_ENDPOINT)
+DOC_CLIENT = boto3.client('cloudsearchdomain', endpoint_url=DOC_ENDPOINT)
 
 MAX_BATCH_SIZE = 5242880 # 5 MB
 MAX_FILE_SIZE = 1048576 # 1 MB
@@ -31,6 +33,9 @@ VALID_AUTHOR_TITLES = ['', 'SENIOR STAFF WRITER', 'STAFF WRITER', 'DESK EDITOR',
 'HEALTH EDITOR', 'ASSHOLE', 'INTERMISSION', 'NEWS EDITOR', 'CLASS PRESIDENT', 'ASSOCIATED PRESS',
 'AP SPORTS WRITER', 'AP BASEBALL WRITER', 'WEEKLY COLUMNIST', 'HEALTH COLUMNIST', 'ASSOCIATED EDITOR',
 'ASSOCIATE EDITOR', 'SPORTS EDITOR', 'EDITOR THE DAILY', ]
+
+# for multiprocessing; set this to a reasonable number.
+POOL_SIZE = 2
 
 class Logger:
     def __init__(self, path, basename):
@@ -291,10 +296,31 @@ class ArchivesTextProcessor:
             self.logger.log("THERE WAS AN ERROR IN UPLOADDING THIS BATCH. WE DON'T CURRENTLY HAVE ERROR HANDLING, YOU WILL NEED TO RETRY THIS BATCH MANUALLY")
         self.logger.log("done with batch upload")
 
+def process_and_upload_year(year):
+    yearProcessor = ArchivesTextProcessor(ARCHIVES_TEXT_PATH, year, year + 1, MAX_BATCH_SIZE, DOC_CLIENT)
+    print("starting to process year %d" % year)
+    while(not yearProcessor.are_we_done()):
+        yearProcessor.upload_article_batch_to_cloudsearch()
+    print("done with processing year %d" % year)
+
+def uploadYears(startYear, endYear):
+    with Pool(POOL_SIZE) as p:
+        p.map(process_and_upload_year, list(range(startYear, endYear + 1)))
+
+def test_upload_single_batch_from_year(year):
+    print("starting to test process year %d" % year)
+    testProcessor = ArchivesTextProcessor(ARCHIVES_TEXT_PATH, year, year + 1, MAX_BATCH_SIZE, DOC_CLIENT)
+    testProcessor.upload_article_batch_to_cloudsearch()
+    time.sleep(1)
+    print("done with test processing year %d" % year)
+
+def multiprocessing_test():
+    with Pool(POOL_SIZE) as p:
+        p.map(test_upload_single_batch_from_year, list(range(1900, 1902)))
 
 def tests():
     print('tests:')
-    testProcessor = ArchivesTextProcessor(ARCHIVES_TEXT_PATH, 1901, 1902, MAX_BATCH_SIZE, doc_client)
+    testProcessor = ArchivesTextProcessor(ARCHIVES_TEXT_PATH, 1901, 1902, MAX_BATCH_SIZE, DOC_CLIENT)
     
     # uncomment if you want to see some article data be printed out
     # for i in range(100):
@@ -305,14 +331,22 @@ def tests():
     # print('if you compare with https://github.com/TheStanfordDaily/archives-text/tree/master/1899/12 you should see matching results')
     
     # uncomment to test a processing of range between 1899 - 1901
-    while(not testProcessor.are_we_done()):
-        testProcessor.create_batch_article_cloudsearch_add_request_JSON()
+    # while(not testProcessor.are_we_done()):
+    #     testProcessor.create_batch_article_cloudsearch_add_request_JSON()
 
     # uncomment to test a single batch upload (note: will take a while if aws is slow)
     # testProcessor.upload_article_batch_to_cloudsearch()
 
+    # uncomment to test multiprocessed single batch upload
+    # multiprocessing_test()
+
+# multiprocessed full upload of archives text
+def upload_archives_text():
+    uploadYears(1892, 2014)
+
 def main():
     tests()
+    # upload_archives_text()
 
 if __name__ == '__main__':
     main()
