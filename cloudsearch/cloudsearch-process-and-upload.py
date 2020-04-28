@@ -223,6 +223,8 @@ class ArchivesTextProcessor:
                     break
 
             articleText = ''
+            for i in range(3, len(articleLines)):
+                articleLines[i] += '\n'
             articleText = self.removeRepeats(articleText.join(articleLines[3:]).strip())
 
             filename_parts = self.currentArticle.split('.')
@@ -321,14 +323,14 @@ def multiprocessing_test():
 def tests():
     print('tests:')
     testProcessor = ArchivesTextProcessor(ARCHIVES_TEXT_PATH, 1901, 1902, MAX_BATCH_SIZE, DOC_CLIENT)
-    
+
     # uncomment if you want to see some article data be printed out
-    # for i in range(100):
-    #     print(testProcessor.get_current_path('article'))
-    #     print("size:", testProcessor.get_current_add_request_size_in_bytes())
-    #     testProcessor.pretty_print_current_article_data()
-    #     testProcessor.move_to_next_article()
-    # print('if you compare with https://github.com/TheStanfordDaily/archives-text/tree/master/1899/12 you should see matching results')
+    for i in range(10):
+        print(testProcessor.get_current_path('article'))
+        print("size:", testProcessor.get_current_add_request_size_in_bytes())
+        testProcessor.pretty_print_current_article_data()
+        testProcessor.move_to_next_article()
+    print('if you compare with https://github.com/TheStanfordDaily/archives-text/tree/master/1899/12 you should see matching results')
     
     # uncomment to test a processing of range between 1899 - 1901
     # while(not testProcessor.are_we_done()):
