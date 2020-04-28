@@ -91,6 +91,8 @@ class ArchivesTextProcessor:
     '''
     the following are functions to help us iterate through the files in archives-text
     '''
+    def are_we_done(self):
+        return self.is_done
 
     def get_current_path(self, level):
         if(level == 'year'):
@@ -255,6 +257,9 @@ class ArchivesTextProcessor:
         print('text sample:', current_article_data['article_text'][0:40])
         print('----------------------------------------------------------')
 
+    """
+    the following are functions to upload data to cloudsearch
+    """
     def create_current_article_cloudsearch_add_request_JSON(self):
         fields = self.get_current_article_data()
         return {
@@ -286,9 +291,6 @@ class ArchivesTextProcessor:
         self.currentSizeInBytes = 0
         return current_batch
 
-    def are_we_done(self):
-        return self.is_done
-
     def upload_article_batch_to_cloudsearch(self):
         self.logger.log("making a batch upload")
         batch = json.dumps(self.create_batch_article_cloudsearch_add_request_JSON())
@@ -298,17 +300,9 @@ class ArchivesTextProcessor:
             self.logger.log("THERE WAS AN ERROR IN UPLOADDING THIS BATCH. WE DON'T CURRENTLY HAVE ERROR HANDLING, YOU WILL NEED TO RETRY THIS BATCH MANUALLY")
         self.logger.log("done with batch upload")
 
-def process_and_upload_year(year):
-    yearProcessor = ArchivesTextProcessor(ARCHIVES_TEXT_PATH, year, year + 1, MAX_BATCH_SIZE, DOC_CLIENT)
-    print("starting to process year %d" % year)
-    while(not yearProcessor.are_we_done()):
-        yearProcessor.upload_article_batch_to_cloudsearch()
-    print("done with processing year %d" % year)
-
-def uploadYears(startYear, endYear):
-    with Pool(POOL_SIZE) as p:
-        p.map(process_and_upload_year, list(range(startYear, endYear + 1)))
-
+"""
+some tests
+"""
 def test_upload_single_batch_from_year(year):
     print("starting to test process year %d" % year)
     testProcessor = ArchivesTextProcessor(ARCHIVES_TEXT_PATH, year, year + 1, MAX_BATCH_SIZE, DOC_CLIENT)
@@ -341,6 +335,20 @@ def tests():
 
     # uncomment to test multiprocessed single batch upload
     # multiprocessing_test()
+
+"""
+for actually uploading archive text
+"""
+def process_and_upload_year(year):
+    yearProcessor = ArchivesTextProcessor(ARCHIVES_TEXT_PATH, year, year + 1, MAX_BATCH_SIZE, DOC_CLIENT)
+    print("starting to process year %d" % year)
+    while(not yearProcessor.are_we_done()):
+        yearProcessor.upload_article_batch_to_cloudsearch()
+    print("done with processing year %d" % year)
+
+def uploadYears(startYear, endYear):
+    with Pool(POOL_SIZE) as p:
+        p.map(process_and_upload_year, list(range(startYear, endYear + 1)))
 
 # multiprocessed full upload of archives text
 def upload_archives_text():
