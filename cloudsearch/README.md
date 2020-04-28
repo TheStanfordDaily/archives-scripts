@@ -5,11 +5,12 @@ Use amazon CloudSearch to power archive search.
 
 ## Startup
 How to run the contents of this directory
-1. Make sure you have [AWS Credentials Setup](#aws-credentials-setup)
-1. Create conda environment `conda create -n cloudsearch_env python=3.7.4`
-2. Activate conda environment `conda activate cloudsearch_env`
-3. Install packages `pip install -r requirements.txt`
-4. Run program `incomplete`
+1. Run `sh setup.sh` in `cloudsearch/` directory to clone archives text.
+2. Make sure you have [AWS Credentials Setup](#aws-credentials-setup)
+3. Create conda environment `conda create -n cloudsearch_env python=3.7.4`
+4. Activate conda environment `conda activate cloudsearch_env`
+5. Install packages `pip install -r requirements.txt`
+6. Run program `incomplete`
 
 ## AWS Credentials Setup
 Never check in AWS credentials into git. Instead:
@@ -48,8 +49,6 @@ gives the schema of columns in cloudsearch
 - change article number to articleLocalID which includes the entire first part of filename, not just the number.
 - make setup.sh script which runs `git clone https://github.com/TheStanfordDaily/archives-text.git`
 - look into highlighting search hits with Cloudsearch
-
-
 
 ## Questions & answers when found & also terms/things which I found confusing
 - CloudSearch vs CloudSearch 2?

@@ -1,0 +1,1 @@
+This is where output logs from `cloudsearch-process-and-upload.py` are sent
