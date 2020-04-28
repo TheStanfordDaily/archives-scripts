@@ -185,7 +185,8 @@ class ArchivesTextProcessor:
         temp = (text + text).find(text, 1, -1)
         if(temp != -1):
             res = text[:temp]
-            # self.logger.log("repeat found, reducing text to single occurrence")
+            # self.logger.log(self.get_current_path('article'))
+            # self.logger.log(res)
             return res
         return text
 
@@ -286,12 +287,14 @@ class ArchivesTextProcessor:
         batch = json.dumps(self.create_batch_article_cloudsearch_add_request_JSON())
         response = self.docClient.upload_documents(documents=batch, contentType="application/json")
         self.logger.log(str(response))
+        if(response['status'] != 'success'):
+            self.logger.log("THERE WAS AN ERROR IN UPLOADDING THIS BATCH. WE DON'T CURRENTLY HAVE ERROR HANDLING, YOU WILL NEED TO RETRY THIS BATCH MANUALLY")
         self.logger.log("done with batch upload")
 
 
 def tests():
     print('tests:')
-    testProcessor = ArchivesTextProcessor(ARCHIVES_TEXT_PATH, 1899, 1901, MAX_BATCH_SIZE, doc_client)
+    testProcessor = ArchivesTextProcessor(ARCHIVES_TEXT_PATH, 1901, 1902, MAX_BATCH_SIZE, doc_client)
     
     # uncomment if you want to see some article data be printed out
     # for i in range(100):
