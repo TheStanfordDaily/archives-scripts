@@ -8,24 +8,8 @@ requests)
 see `docs/search.md` for a description of the fields
 
 ref https://github.com/awsdocs/amazon-cloudsearch-developer-guide/blob/master/doc_source/preparing-data.md#creating-document-batches
-
-important: need to make sure that special characters are properly escaped.
-
-todo:
-
-create a script to find all of the author titles
-
-should probably define a class to read over data in a certain
-directory. For example, objects can be defined with a year to process
-and then will process all documents in that year
-
-this object can also keep track of total data stored, s.t. it doesn't exceed 5 MB
-
-this object will have a function process_next_article_data() which will do just that
-and if this data doesn't put the total data over 5 MB, then it will tack it on
-Otherwise, it will write current data to a file, and then clear that data, and start
-new data collection starting with this current article data.
 """
+
 import boto3
 import os
 import re
@@ -37,7 +21,16 @@ import re
 ARCHIVES_TEXT_PATH = "/Users/alexfu/Desktop/School/College/Clubs_Activities/Stanford-Daily/archives-text/"
 
 VALID_ARTICLE_TYPES = ['article', 'advertisement',]
-VALID_AUTHOR_TITLES = ['','DESK EDITOR',]
+VALID_AUTHOR_TITLES = ['', 'SENIOR STAFF WRITER', 'STAFF WRITER', 'DESK EDITOR', 'CONTRIBUTING WRITER', 
+'MANAGING EDITOR', 'EDITOR IN CHIEF', 'DEPUTY EDITOR', 'EXECUTIVE EDITOR', 'STAFF', 
+'ASSU President', 'ASSU Parlimentarian', 'STAFF FOOTBALL WRITERS', 'FASHION COLUMNIST', 
+'FOOTBALL EDITOR', 'ARTS EDITOR', 'FOOD EDITOR', 'FOOD DINING EDITOR', 'OPINIONS DESK',
+'FOOD DRUNK EDITOR', 'FELLOW', 'DAILY INTERN', 'CONTRIBUTING EDITOR', 'MANAGING WRITER',
+'GUEST COLUMNIST', 'SEX GODDESS', 'GUEST COLUMNISTS', 'EDITORIAL STAKE', 'CONTRIBUTING YANKEE',
+'SPECIAL CONTRIBUTOR', 'EDITORIAL BOARD', 'CONTRIBUTING WRITER', 'EDITORIAL STAFF', 'FILM CRITIC',
+'HEALTH EDITOR', 'ASSHOLE', 'INTERMISSION', 'NEWS EDITOR', 'CLASS PRESIDENT', 'ASSOCIATED PRESS',
+'AP SPORTS WRITER', 'AP BASEBALL WRITER', 'WEEKLY COLUMNIST', 'HEALTH COLUMNIST', 'ASSOCIATED EDITOR',
+'ASSOCIATE EDITOR', 'SPORTS EDITOR', 'EDITOR THE DAILY', ]
 
 # see here for limits https://github.com/awsdocs/amazon-cloudsearch-developer-guide/blob/master/doc_source/limits.md
 MAX_BATCH_SIZE = 5242880 # 5 MB
@@ -144,8 +137,16 @@ def get_article_data(year, month, day, filename):
         
         filename_parts = filename.split('.')
         articleType = filename_parts[1]
-        temp = re.findall(r'\d+', filename_parts[0]) 
         articleNumber = filename_parts[0]
+
+        authorTitle = '' 
+        for possibleTitle in VALID_AUTHOR_TITLES:
+            title_index = author.upper().find(possibleTitle)
+            if(title_index > 0):
+                authorTitle = possibleTitle
+                author = author[0:title_index]
+                break
+
 
         articleData = {
             'articleText': articleText.strip(),
@@ -155,7 +156,7 @@ def get_article_data(year, month, day, filename):
             'title': title.strip(),
             'subtitle': subtitle.strip(),
             'author': author.strip(),
-            'authorTitle': '', # authorTitle not yet implemented.
+            'authorTitle': authorTitle, # authorTitle not yet implemented.
         }
         return articleData
 
@@ -172,7 +173,7 @@ def pretty_print_article_fields(article_fields):
     print("----------------------------------------------------------")
 
 def generate_lots_article_data():
-    archives_years = get_archives_years()
+    archives_years = get_archives_years()[63:64]
     archives_months = get_archives_months(archives_years[0])
     archives_days = get_archives_days(archives_years[0], archives_months[0])
     article_names = get_archives_article_filenames(archives_years[0], archives_months[0], archives_days[0])
