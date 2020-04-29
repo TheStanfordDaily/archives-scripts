@@ -179,6 +179,7 @@ class ArchivesTextProcessor:
 
             articleText = ''
             for i in range(3, len(articleLines)):
+                articleLines[i] = re.sub('\s+', ' ', articleLines[i]).strip()
                 articleLines[i] += '\n'
             articleTextJoined = articleText.join(articleLines[3:])
             articleText = self.removeRepeats(articleTextJoined)
@@ -236,7 +237,8 @@ def process_archives_text():
     processYears(1892, 2014)
 
 def main():
-    process_archives_text()
+    # process_archives_text()
+    tests()
 
 
 if __name__ == '__main__':
