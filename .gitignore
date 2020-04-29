@@ -5,3 +5,4 @@ stanford-text-corrections
 output*
 *.swp
 .vscode/
+*.out

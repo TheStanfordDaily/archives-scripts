@@ -75,4 +75,12 @@ conda activate cloudsearch_env
 pip install -r requirements.txt
 ```
 And finally:
-`python fix-repeats.py`
+`python fix-repeats.py > fix-repeats.log`
+Once that's done `cat fix-repeats.log | grep "error"` to check for any errors. You should also go through log manually and make sure everything makes sense.
+
+If you're satisfied, you can use 
+`tmux`
+`nohup sh archives-text-git.sh &` to commit and push all the changes in `archives-text`
+then, `ctrl + b` and `d` to leave and detatch the tmux session, so that it will continue running and you can go do other stuff.
+`tmux list-sessions` and verify that you see the session you just created.
+Verify that the script worked with `cat nohup.out`, making sense the output makes sense. Will take a while.

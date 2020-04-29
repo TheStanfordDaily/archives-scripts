@@ -13,7 +13,7 @@ import time
 ARCHIVES_TEXT_PATH = '../archives-text/'
 
 # for multiprocessing; set this to a reasonable number.
-POOL_SIZE = 100
+POOL_SIZE = 123
 
 class Logger:
     def __init__(self, path, basename):
@@ -162,7 +162,12 @@ class ArchivesTextProcessor:
 
     def get_current_article_data(self):
         with open(self.get_current_path('article'), 'r') as f:
-            articleRawText = f.read()
+            articleRawText = ''
+            try:
+                articleRawText = f.read()
+            except:
+                print("error: %s", self.get_current_path('article'))
+                return ""
             articleLines = articleRawText.splitlines()
             if(len(articleLines) == 0):
                 print("error: %s", self.get_current_path('article'))
@@ -232,7 +237,6 @@ def process_archives_text():
 
 def main():
     process_archives_text()
-    # pool_test(1892, 2014)
 
 
 if __name__ == '__main__':
