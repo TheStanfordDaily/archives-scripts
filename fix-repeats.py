@@ -10,7 +10,7 @@ import time
 
 
 
-ARCHIVES_TEXT_PATH = '../archives-text/'
+ARCHIVES_TEXT_PATH = './cloudsearch/archives-text/'
 
 # for multiprocessing; set this to a reasonable number.
 POOL_SIZE = 123
