@@ -138,7 +138,7 @@ Once that's done `cat fix-repeats.log | grep "error"` to check for any errors. Y
 
 If you're satisfied, you can use 
 `tmux`
-`nohup sh archives-text-git.sh &` to commit and push all the changes in `archives-text`
+`nohup sh archives-text-git.sh &` to commit and push all the changes in `archives-text` (maybe we don't need nohup since we're going to detatch the tmux session anyways.)
 then, `ctrl + b` and `d` to leave and detatch the tmux session, so that it will continue running and you can go do other stuff.
 `tmux list-sessions` and verify that you see the session you just created.
 Verify that the script worked with `cat nohup.out`, making sense the output makes sense. Will take a while.
