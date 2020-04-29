@@ -13,7 +13,7 @@ import time
 ARCHIVES_TEXT_PATH = '../archives-text/'
 
 # for multiprocessing; set this to a reasonable number.
-POOL_SIZE = 2
+POOL_SIZE = 100
 
 class Logger:
     def __init__(self, path, basename):
@@ -124,6 +124,7 @@ class ArchivesTextProcessor:
                 return -1
             self.set_months_left_in_year()
         self.currentMonth = self.months_left_in_year.pop()
+        print("moving to monnth %d in year %d" % (self.currentMonth, self.currentYear))
         return 1
         
     # returns -1 if we can't move anymore (i.e. we're done), 1 on success
@@ -195,17 +196,24 @@ class ArchivesTextProcessor:
     def are_we_done(self):
         return self.is_done
 
-def process_and_upload_year(year):
-    yearProcessor = ArchivesTextProcessor(ARCHIVES_TEXT_PATH, year, year + 1, MAX_BATCH_SIZE, DOC_CLIENT)
+def process_year(year):
+    yearProcessor = ArchivesTextProcessor(ARCHIVES_TEXT_PATH, year, year + 1)
     print("starting to process year %d" % year)
     while(not yearProcessor.are_we_done()):
         yearProcessor.fix_current_article_data()
-
     print("done with processing year %d" % year)
 
-def uploadYears(startYear, endYear):
+def processYears(startYear, endYear):
     with Pool(POOL_SIZE) as p:
-        p.map(process_and_upload_year, list(range(startYear, endYear + 1)))
+        p.map(process_year, list(range(startYear, endYear + 1)))
+
+def print_num(num):
+    print(num)
+    print(num)
+
+def pool_test(startYear, endYear):
+    with Pool(POOL_SIZE) as p:
+        p.map(print_num, list(range(startYear, endYear + 1)))
 
 def tests():
     print('tests:')
@@ -219,12 +227,13 @@ def tests():
     print('if you compare with https://github.com/TheStanfordDaily/archives-text/tree/master/1899/12 you should see matching results')
     
 # multiprocessed full upload of archives text
-def upload_archives_text():
-    uploadYears(1892, 2014)
+def process_archives_text():
+    processYears(1892, 2014)
 
 def main():
-    tests()
-    # upload_archives_text()
+    process_archives_text()
+    # pool_test(1892, 2014)
+
 
 if __name__ == '__main__':
     main()
