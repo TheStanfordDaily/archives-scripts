@@ -227,8 +227,8 @@ class ArchivesTextProcessor:
             articleText = ''
             for i in range(3, len(articleLines)):
                 articleLines[i] += '\n'
-            articleText = self.removeRepeats(articleText.join(articleLines[3:]).strip())
-
+            articleTextJoined = articleText.join(articleLines[3:])
+            articleText = self.removeRepeats(articleTextJoined)
             filename_parts = self.currentArticle.split('.')
             articleType = filename_parts[1]
             articleNumber = filename_parts[0]
@@ -254,7 +254,7 @@ class ArchivesTextProcessor:
         print('article_type:', current_article_data['article_type'])
         print('article_number:', current_article_data['article_number'])
         print('publish_date:', current_article_data['publish_date'])
-        print('text sample:', current_article_data['article_text'][0:40])
+        print('text sample:', current_article_data['article_text'])
         print('----------------------------------------------------------')
 
     """
