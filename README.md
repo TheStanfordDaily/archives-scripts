@@ -59,3 +59,20 @@ ffmpeg -i opening.mkv -i episode.mkv -i ending.mkv \
 
 ## Cloudsearch
 See [cloudsearch level readme](./cloudsearch/README.md) for details
+
+## Fix repeats
+Assumes that you have a copy of archives text in the same directory that `archives-scripts` is located. I would make a script for this, but it's like slow and it's just a git clone.
+e.g.
+```
+TSD/
+  archives-scripts/
+  archives-text/
+```
+Next, some more setup
+```bash
+conda create -n [env name] python=3.7.4
+conda activate cloudsearch_env
+pip install -r requirements.txt
+```
+And finally:
+`python fix-repeats.py`
