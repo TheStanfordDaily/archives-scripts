@@ -1,0 +1,6 @@
+archives-text/
+archives-text2/
+archives-text3/
+*.log
+cloudsearch_venv/
+*.out
