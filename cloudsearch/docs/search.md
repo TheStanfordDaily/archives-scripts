@@ -40,6 +40,27 @@ the author of the document. Can be found from the third line of any article/adve
 the document author's title. Can be found from the third line of any article/advert file (line beginning with `###`). Valid literals include: TODO
 
 ## Example data
+```python
+{
+    'type': 'add', 
+    'id': '1901-12-20T12:00:00ZarticleMODSMD_ARTICLE9', 
+    'fields': {
+        'article_text': 'General Alger is ...', 
+        'article_type': 'article', 
+        'article_number': 'MODSMD_ARTICLE9', 
+        'title': 'News of the World.', 
+        'subtitle': '', 
+        'author': '', 
+        'author_title': '', 
+        'publish_date': '1901-12-20T12:00:00Z'
+    }
+}
+```
+
+
+## aws index configuration
+![aws index config](./aws-cloudsearch-indexes.png)
+Note: highlighting is on, to enable highlights.
 
 
 ## Resources

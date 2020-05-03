@@ -45,15 +45,14 @@ processes the .txt files in archives-text to cloudsearch readable JSON
 script to find possible author titles
 
 ### `cloudsearch-process-and-upload.py`
-an OO program which does same thing as `process-archives-text.py` except neater/better. Designed to be run in parallel (one object/process per year, or year range)
+an OO program which does same thing as `process-archives-text.py` except neater/better. Designed to be run in parallel (one object/process per year, or year range). Check out doc in file for a little more detail.
 
 ### `docs/search.md`
 gives the schema of columns in cloudsearch
 
 ## Todo
-- create a script to correct document data (many of the documents have repeated text)
 - make estimates on size / costs of everything -- figure out optimal scaling option (e.g. search.m1.small)
-- look into highlighting search hits with Cloudsearch
+  - Seems like amazon does this automatically for us?
 
 ## Questions & answers when found & also terms/things which I found confusing
 - CloudSearch vs CloudSearch 2?
