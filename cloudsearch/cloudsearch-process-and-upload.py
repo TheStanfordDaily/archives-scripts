@@ -3,6 +3,9 @@ Designed to be run in parallel, uploads processed archives-text
 data in 5 mb batches
 
 designed to be run in the cloudsearch/ directory
+
+you should check logs for jumps in years once done. If there are any, then it's likely the last year prior to the jump
+didn't successfully upload, and you'll have to reupload those years.
 '''
 
 import boto3
@@ -13,7 +16,7 @@ from multiprocessing import Pool
 import time
 
 
-DOC_ENDPOINT = 'https://doc-dev-alex-j7lgucvvgtchzkfv7dze2su4ey.us-east-1.cloudsearch.amazonaws.com'
+DOC_ENDPOINT = 'https://doc-archives-text-cloudsearch-rba7owuzh6kn24pic2yudkawpe.us-east-1.cloudsearch.amazonaws.com'
 DOC_CLIENT = boto3.client('cloudsearchdomain', endpoint_url=DOC_ENDPOINT)
 
 MAX_BATCH_SIZE = 5242880 # 5 MB
@@ -35,7 +38,7 @@ VALID_AUTHOR_TITLES = ['', 'SENIOR STAFF WRITER', 'STAFF WRITER', 'DESK EDITOR',
 'ASSOCIATE EDITOR', 'SPORTS EDITOR', 'EDITOR THE DAILY', ]
 
 # for multiprocessing; set this to a reasonable number.
-POOL_SIZE = 2
+POOL_SIZE = 1 # note: large pools (>4 or 5) don't seem to mesh well w/ cloudsearch
 
 class Logger:
     def __init__(self, path, basename):
@@ -143,7 +146,6 @@ class ArchivesTextProcessor:
     def move_to_next_year(self):
         if(len(self.years_left) == 0):
             self.logger.log('done')
-            print('DONE!!')
             self.is_done = True
             return -1
         else:
@@ -203,18 +205,26 @@ class ArchivesTextProcessor:
             articleLines = articleRawText.splitlines()
 
             # perform some sanity checks 
-            if(not articleLines[0].startswith('#')):
-                self.logger.log('error in first line of article %s' % self.get_current_path("article"))
-            if(not articleLines[1].startswith('##')):
-                self.logger.log('error in second line of article %s' % self.get_current_path("article"))
-            if(not articleLines[2].startswith('###')):
-                self.logger.log('error in third line of article %s' % self.get_current_path("article"))
+            try:
+                if(not articleLines[0].startswith('#')):
+                    self.logger.log('error in first line of article %s' % self.get_current_path("article"))
+                if(not articleLines[1].startswith('##')):
+                    self.logger.log('error in second line of article %s' % self.get_current_path("article"))
+                if(not articleLines[2].startswith('###')):
+                    self.logger.log('error in third line of article %s' % self.get_current_path("article"))
+            except:
+                pass
 
             # extract data
-            title = re.sub('\s+', ' ', articleLines[0][2:].strip()) # get rid of extra whitespace, plus skip extra chars
-            subtitle = re.sub('\s+', ' ', articleLines[1][3:].strip()) 
-            author_raw = re.sub('\s+', ' ', articleLines[2][4:].strip())
-
+            try:
+                title = re.sub('\s+', ' ', articleLines[0][2:].strip()) # get rid of extra whitespace, plus skip extra chars
+                subtitle = re.sub('\s+', ' ', articleLines[1][3:].strip()) 
+                author_raw = re.sub('\s+', ' ', articleLines[2][4:].strip())
+            except:
+                title = ""
+                subtitle = ""
+                author_raw = ""
+                
             author = author_raw
             authorTitle = ''
             for possibleTitle in VALID_AUTHOR_TITLES:
@@ -287,14 +297,16 @@ class ArchivesTextProcessor:
             not_done = self.move_to_next_article()
             if(not_done < 0):
                 break # we've reached the last article
-        self.logger.log('done with batch, ended at article %s, has size bytes %d and total of %d articles' % (self.get_current_path("article"), self.currentSizeInBytes, article_count))
+        self.logger.log('created batch, ended at article %s, has size bytes %d and total of %d articles' % (self.get_current_path("article"), self.currentSizeInBytes, article_count))
         self.currentSizeInBytes = 0
         return current_batch
 
     def upload_article_batch_to_cloudsearch(self):
         self.logger.log("making a batch upload")
         batch = json.dumps(self.create_batch_article_cloudsearch_add_request_JSON())
+        self.logger.log("sending data to cloudsearch")
         response = self.docClient.upload_documents(documents=batch, contentType="application/json")
+        self.logger.log("cloudsearch response:")
         self.logger.log(str(response))
         if(response['status'] != 'success'):
             self.logger.log("THERE WAS AN ERROR IN UPLOADDING THIS BATCH. WE DON'T CURRENTLY HAVE ERROR HANDLING, YOU WILL NEED TO RETRY THIS BATCH MANUALLY")
@@ -317,14 +329,14 @@ def multiprocessing_test():
 def tests():
     print('tests:')
     testProcessor = ArchivesTextProcessor(ARCHIVES_TEXT_PATH, 1901, 1902, MAX_BATCH_SIZE, DOC_CLIENT)
-
-    # uncomment if you want to see some article data be printed out
-    for i in range(10):
-        print(testProcessor.get_current_path('article'))
-        print("size:", testProcessor.get_current_add_request_size_in_bytes())
-        testProcessor.pretty_print_current_article_data()
-        testProcessor.move_to_next_article()
-    print('if you compare with https://github.com/TheStanfordDaily/archives-text/tree/master/1899/12 you should see matching results')
+    print(testProcessor.create_current_article_cloudsearch_add_request_JSON())
+    # # uncomment if you want to see some article data be printed out
+    # for i in range(10):
+    #     print(testProcessor.get_current_path('article'))
+    #     print("size:", testProcessor.get_current_add_request_size_in_bytes())
+    #     testProcessor.pretty_print_current_article_data()
+    #     testProcessor.move_to_next_article()
+    # print('if you compare with https://github.com/TheStanfordDaily/archives-text/tree/master/1899/12 you should see matching results')
     
     # uncomment to test a processing of range between 1899 - 1901
     # while(not testProcessor.are_we_done()):
@@ -354,9 +366,13 @@ def uploadYears(startYear, endYear):
 def upload_archives_text():
     uploadYears(1892, 2014)
 
+def upload_archives_text_test():
+    uploadYears(1969, 1969)
+
 def main():
-    tests()
+    # tests()
     # upload_archives_text()
+    upload_archives_text_test()
 
 if __name__ == '__main__':
     main()

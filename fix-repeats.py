@@ -7,7 +7,7 @@ import re
 import json
 from multiprocessing import Pool
 import time
-
+import argparse
 
 
 ARCHIVES_TEXT_PATH = './cloudsearch/archives-text/'
@@ -237,8 +237,19 @@ def process_archives_text():
     processYears(1892, 2014)
 
 def main():
-    # process_archives_text()
-    tests()
+    parser = argparse.ArgumentParser(description='process args')
+    parser.add_argument('argnum', metavar='argnum', type=int, nargs=1)
+    args = parser.parse_args()
+    argnum = args.argnum[0]
+    if(argnum == 0):
+        print("test!")
+    elif(argnum == 1):
+        tests()
+    elif(argnum == 2):
+        process_archives_text()
+    else:
+        print("invalid argnum")
+    
 
 
 if __name__ == '__main__':
